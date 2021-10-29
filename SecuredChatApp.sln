@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecuredChatApp.WebApi", "SecuredChatApp.WebApi\SecuredChatApp.WebApi.csproj", "{9C8CCC32-9893-44B9-9394-A593C85DE566}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9C8CCC32-9893-44B9-9394-A593C85DE566}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C8CCC32-9893-44B9-9394-A593C85DE566}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C8CCC32-9893-44B9-9394-A593C85DE566}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C8CCC32-9893-44B9-9394-A593C85DE566}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {30E978C7-77DC-4BA9-8D2C-7343A1D93AD1}
+	EndGlobalSection
+EndGlobal

@@ -4,7 +4,7 @@ namespace SecuredChatApp.Core.Interfaces.Services
 {
     public interface IUserService
     {
-        public UserLoginResponse Authenticate(UserLoginRequest request);
-        public UserRegisterResponse Register(UserRegisterRequest request);
+        public ResultModel<object> Login(UserLoginRequest request);
+        public ResultModel<object> Register(UserRegisterRequest request);
     }
 }

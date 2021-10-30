@@ -22,47 +22,31 @@ namespace SecuredChatApp.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("Login")]
-        public IActionResult Login([FromBody] UserLoginRequest request)
+        public ResultModel<object> Login([FromBody] UserLoginRequest request)
         {
-            var response = _userService.Authenticate(request);
+            var result = _userService.Login(request);
 
-            if (response == null)
-                throw new Exception("Username or password is incorrect");
+            if(result.success)
+                SetTokenCookie(((UserLoginResponse)result.data).RefreshToken);
 
-            SetTokenCookie(response.RefreshToken);
-
-            return Ok(new {
-                success = true,
-                data = response
-            });
+            return result;
         }
 
         [HttpGet("LoginTest")]
-        public IActionResult LoginTest()
+        public ResultModel<object> LoginTest()
         {
             var claimsIdentity = this.User.Identity as ClaimsIdentity;
             string userId = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
-
-            return Ok(new {
-                success = true,
-                data = String.Concat("Your id : ", userId)
-            });
+            
+            return new ResultModel<object>(data: "your id : " + userId);
         }
 
         [AllowAnonymous]
         [HttpPost("Register")]
-        public IActionResult Register([FromBody] UserRegisterRequest request)
+        public ResultModel<object> Register([FromBody] UserRegisterRequest request)
         {
-            var response = _userService.Register(request);
-
-            if (response == null)
-                throw new Exception("Username or password is incorrect");
-
-            return Ok(new
-            {
-                success = true,
-                data = response
-            });
+            var result = _userService.Register(request);
+            return result;
         }
 
         private void SetTokenCookie(string token)

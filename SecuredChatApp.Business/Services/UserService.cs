@@ -27,27 +27,34 @@ namespace SecuredChatApp.Business.Services
             _appSettings = appSettings.Value;
         }
 
-        public UserLoginResponse Authenticate(UserLoginRequest request)
+        public ResultModel<object> Login(UserLoginRequest request)
         {
             var user = _dbContext.Users
-                .SingleOrDefault(x => x.Email == request.Email 
-                    && x.Password == request.Password
-                    && x.IsActive);
+                .SingleOrDefault(user => user.Email == request.Email 
+                    && user.Password == request.Password
+                    && user.IsActive);
 
-            if (user == null) return null;
+            if (user == null)
+                return new ResultModel<object>(data: "Email or password is not correct!", type:ResultModel<object>.ResultType.FAIL);
 
             var jwtToken = GenerateJwtToken(user);
             user.RefreshToken = GenerateRefreshToken();
             user.RefreshTokenExpireDate = DateTime.UtcNow.AddDays(60);
 
             _dbContext.Update(user);
-            _dbContext.SaveChanges();
+            int result = _dbContext.SaveChanges();
 
-            return new UserLoginResponse(user, jwtToken, user.RefreshToken);
+            if (result < 0)
+                return new ResultModel<object>(data: "An unexpected error has occurred.", type:ResultModel<object>.ResultType.FAIL);
+
+            return new ResultModel<object>(data: new UserLoginResponse(user, jwtToken, user.RefreshToken));
         }
 
-        public UserRegisterResponse Register(UserRegisterRequest request)
+        public ResultModel<object> Register(UserRegisterRequest request)
         {
+            if(!CheckEmailUniqueness(request.Email))
+                return new ResultModel<object>(data: "This email already exists!", type:ResultModel<object>.ResultType.FAIL);
+
             UserEntity userEntity = new UserEntity {
                 Email = request.Email,
                 Nickname = request.Email,
@@ -60,9 +67,9 @@ namespace SecuredChatApp.Business.Services
             int result = _dbContext.SaveChanges();
 
             if (result < 0)
-                return null;
-            else
-                return new UserRegisterResponse(userEntity);
+                return new ResultModel<object>(data: "An unexpected error has occurred.", type:ResultModel<object>.ResultType.FAIL);
+
+            return new ResultModel<object>(data: new UserRegisterResponse(userEntity));
         }
 
         private string GenerateJwtToken(UserEntity user)
@@ -80,8 +87,8 @@ namespace SecuredChatApp.Business.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
-        }
-    
+        }    
+
         private String GenerateRefreshToken()
         {
             using (var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
@@ -90,6 +97,10 @@ namespace SecuredChatApp.Business.Services
                 rngCryptoServiceProvider.GetBytes(randomBytes);
                 return Convert.ToBase64String(randomBytes);
             }
+        }
+    
+        private bool CheckEmailUniqueness(string email){
+            return !_dbContext.Users.Any(user => user.Email == email);
         }
     }
 }

@@ -46,6 +46,25 @@ namespace SecuredChatApp.Business.Services
             return new UserLoginResponse(user, jwtToken, user.RefreshToken);
         }
 
+        public UserRegisterResponse Register(UserRegisterRequest request)
+        {
+            UserEntity userEntity = new UserEntity {
+                Email = request.Email,
+                Nickname = request.Email,
+                Password = request.Password,
+                IsActive = true
+            };
+
+            _dbContext.Users.Add(userEntity);
+
+            int result = _dbContext.SaveChanges();
+
+            if (result < 0)
+                return null;
+            else
+                return new UserRegisterResponse(userEntity);
+        }
+
         private string GenerateJwtToken(UserEntity user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

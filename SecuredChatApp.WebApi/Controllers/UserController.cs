@@ -49,6 +49,22 @@ namespace SecuredChatApp.WebApi.Controllers
             });
         }
 
+        [AllowAnonymous]
+        [HttpPost("Register")]
+        public IActionResult Register([FromBody] UserRegisterRequest request)
+        {
+            var response = _userService.Register(request);
+
+            if (response == null)
+                throw new Exception("Username or password is incorrect");
+
+            return Ok(new
+            {
+                success = true,
+                data = response
+            });
+        }
+
         private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions

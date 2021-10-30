@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+using SecuredChatApp.Infrastructure;
 
 namespace SecuredChatApp.WebApi
 {
@@ -23,6 +25,13 @@ namespace SecuredChatApp.WebApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SecuredChatApp.WebApi", Version = "v1" });
             });
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseNpgsql(Configuration.GetConnectionString("DbConnectionDevelopment"));
+            });
+
+            services.AddCors();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -37,6 +46,12 @@ namespace SecuredChatApp.WebApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(x => x
+                .SetIsOriginAllowed(origin => true)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
 
             app.UseAuthorization();
 

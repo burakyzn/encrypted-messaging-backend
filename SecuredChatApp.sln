@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecuredChatApp.WebApi", "Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecuredChatApp.Infrastructure", "SecuredChatApp.Infrastructure\SecuredChatApp.Infrastructure.csproj", "{C3C1787E-DDC5-4DEF-9463-A2F6B26C120C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecuredChatApp.Business", "SecuredChatApp.Business\SecuredChatApp.Business.csproj", "{E036DBA9-3BFE-4E06-988A-1347C1F474D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{C3C1787E-DDC5-4DEF-9463-A2F6B26C120C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3C1787E-DDC5-4DEF-9463-A2F6B26C120C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3C1787E-DDC5-4DEF-9463-A2F6B26C120C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E036DBA9-3BFE-4E06-988A-1347C1F474D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E036DBA9-3BFE-4E06-988A-1347C1F474D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E036DBA9-3BFE-4E06-988A-1347C1F474D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E036DBA9-3BFE-4E06-988A-1347C1F474D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

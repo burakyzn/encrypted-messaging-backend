@@ -70,6 +70,8 @@ namespace SecuredChatApp.WebApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseExceptionHandler();
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

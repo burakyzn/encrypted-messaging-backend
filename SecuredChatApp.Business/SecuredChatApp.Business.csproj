@@ -4,4 +4,13 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.12.2" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\SecuredChatApp.Core\SecuredChatApp.Core.csproj" />
+    <ProjectReference Include="..\SecuredChatApp.Infrastructure\SecuredChatApp.Infrastructure.csproj" />
+  </ItemGroup>
 </Project>

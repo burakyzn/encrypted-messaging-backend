@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SecuredChatApp.Core.Entities;
 
 namespace SecuredChatApp.Infrastructure
 {
@@ -7,5 +8,7 @@ namespace SecuredChatApp.Infrastructure
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
         }
+
+        public DbSet<UserEntity> Users {get; set;}
     }
 }

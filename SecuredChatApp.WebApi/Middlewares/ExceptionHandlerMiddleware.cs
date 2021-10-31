@@ -1,6 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Http;
-using SecuredChatApp.Core.Models;
+using SecuredChatApp.Core.DTOs;
 using System.Net;
 using System.Threading.Tasks;
 

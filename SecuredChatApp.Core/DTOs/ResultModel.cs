@@ -1,4 +1,4 @@
-namespace SecuredChatApp.Core.Models
+namespace SecuredChatApp.Core.DTOs
 {
     public class ResultModel<T> where T : class
     {

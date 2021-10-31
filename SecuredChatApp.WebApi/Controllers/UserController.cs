@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SecuredChatApp.Core.Interfaces.Services;
-using SecuredChatApp.Core.Models;
+using SecuredChatApp.Core.DTOs;
 
 namespace SecuredChatApp.WebApi.Controllers
 {

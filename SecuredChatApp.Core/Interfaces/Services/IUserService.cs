@@ -1,4 +1,4 @@
-using SecuredChatApp.Core.Models;
+using SecuredChatApp.Core.DTOs;
 
 namespace SecuredChatApp.Core.Interfaces.Services
 {

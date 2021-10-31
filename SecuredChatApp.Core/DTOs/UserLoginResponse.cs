@@ -2,7 +2,7 @@ using System;
 using System.Text.Json.Serialization;
 using SecuredChatApp.Core.Entities;
 
-namespace SecuredChatApp.Core.Models
+namespace SecuredChatApp.Core.DTOs
 {
     public class UserLoginResponse
     {

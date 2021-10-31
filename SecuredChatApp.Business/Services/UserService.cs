@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using SecuredChatApp.Business.Helpers;
 using SecuredChatApp.Core.Entities;
 using SecuredChatApp.Core.Interfaces.Services;
-using SecuredChatApp.Core.Models;
+using SecuredChatApp.Core.DTOs;
 using SecuredChatApp.Infrastructure;
 
 namespace SecuredChatApp.Business.Services

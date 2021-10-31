@@ -1,8 +1,8 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace SecuredChatApp.Core.Models
+namespace SecuredChatApp.Core.DTOs
 {
-    public class UserLoginRequest
+    public class UserRegisterRequest
     {
         [Required]
         public string Email { get; set; }

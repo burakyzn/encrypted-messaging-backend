@@ -5,6 +5,9 @@ namespace SecuredChatApp.Core.DTOs
     public class UserRegisterRequest
     {
         [Required]
+        public string Nickname { get; set; }
+
+        [Required]
         public string Email { get; set; }
 
         [Required]

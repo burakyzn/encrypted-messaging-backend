@@ -57,7 +57,7 @@ namespace SecuredChatApp.Business.Services
 
             UserEntity userEntity = new UserEntity {
                 Email = request.Email,
-                Nickname = request.Email,
+                Nickname = request.Nickname,
                 Password = request.Password,
                 IsActive = true
             };

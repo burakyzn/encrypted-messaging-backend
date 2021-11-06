@@ -10,5 +10,6 @@ namespace SecuredChatApp.Infrastructure
         }
 
         public DbSet<UserEntity> Users {get; set;}
+        public DbSet<FriendEntity> Friends {get; set; }
     }
 }

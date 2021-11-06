@@ -49,12 +49,20 @@ namespace SecuredChatApp.WebApi.Controllers
             return result;
         }
 
+        [AllowAnonymous]
+        [HttpPost("AddFriend")]
+        public ResultModel<object> AddFriend([FromBody] AddFriendRequest request)
+        {
+            var result = _userService.AddFriend(request);
+            return result;
+        }
+
         private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(60)
+                Expires = DateTime.Now.AddDays(60)
             };
 
             Response.Cookies.Append("refreshToken", token, cookieOptions);

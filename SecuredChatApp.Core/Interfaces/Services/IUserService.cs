@@ -6,5 +6,6 @@ namespace SecuredChatApp.Core.Interfaces.Services
     {
         public ResultModel<object> Login(UserLoginRequest request);
         public ResultModel<object> Register(UserRegisterRequest request);
+        public ResultModel<object> AddFriend(AddFriendRequest request);
     }
 }

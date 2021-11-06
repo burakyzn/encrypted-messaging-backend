@@ -27,6 +27,33 @@ namespace SecuredChatApp.Business.Services
             _appSettings = appSettings.Value;
         }
 
+        private string GenerateJwtToken(UserEntity user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                }),
+                Expires = DateTime.Now.AddDays(30),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        private String GenerateRefreshToken()
+        {
+            using (var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
+            {
+                var randomBytes = new byte[64];
+                rngCryptoServiceProvider.GetBytes(randomBytes);
+                return Convert.ToBase64String(randomBytes);
+            }
+        }
+
         public ResultModel<object> Login(UserLoginRequest request)
         {
             var user = _dbContext.Users
@@ -39,7 +66,7 @@ namespace SecuredChatApp.Business.Services
 
             var jwtToken = GenerateJwtToken(user);
             user.RefreshToken = GenerateRefreshToken();
-            user.RefreshTokenExpireDate = DateTime.UtcNow.AddDays(60);
+            user.RefreshTokenExpireDate = DateTime.Now.AddDays(60);
 
             _dbContext.Update(user);
             int result = _dbContext.SaveChanges();
@@ -71,36 +98,56 @@ namespace SecuredChatApp.Business.Services
 
             return new ResultModel<object>(data: new UserRegisterResponse(userEntity));
         }
-
-        private string GenerateJwtToken(UserEntity user)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(30),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }    
-
-        private String GenerateRefreshToken()
-        {
-            using (var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
-            {
-                var randomBytes = new byte[64];
-                rngCryptoServiceProvider.GetBytes(randomBytes);
-                return Convert.ToBase64String(randomBytes);
-            }
-        }
     
         private bool CheckEmailUniqueness(string email){
             return !_dbContext.Users.Any(user => user.Email == email);
         }
+
+        public ResultModel<object> AddFriend(AddFriendRequest request)
+        {
+            var user = _dbContext.Users.SingleOrDefault(user => 
+                        user.Id == request.Id &&
+                        user.IsActive
+                    );
+
+            if (!IsUserExist(request.ToEmail))
+                return new ResultModel<object>(data: "User does not exist!", type: ResultModel<object>.ResultType.FAIL);
+
+            var requestTo = _dbContext.Users.SingleOrDefault(user =>
+                        user.Email == request.ToEmail &&
+                        user.IsActive
+                    );
+
+            if (!CheckSingleAddFriendRequest(user.Email, request.ToEmail))
+                return new ResultModel<object>(data: "Only one friend request can be sent to a person!", type: ResultModel<object>.ResultType.FAIL);
+
+            FriendEntity friendEntity = new FriendEntity
+            {
+                Creator = request.Id.ToString(),
+                IsRequest = true,
+                User = user.Email,
+                With = request.ToEmail,
+                IsActive = true
+            };
+
+            _dbContext.Friends.Add(friendEntity);
+
+            int result = _dbContext.SaveChanges();
+
+            if (result < 0)
+                return new ResultModel<object>(data: "An unexpected error has occurred.", type: ResultModel<object>.ResultType.FAIL);
+
+            return new ResultModel<object>();
+        }
+
+        private bool CheckSingleAddFriendRequest(string FromEmail, string ToEmail)
+        {
+            return !_dbContext.Friends.Any(friend => 
+                (friend.User == FromEmail && friend.With == ToEmail) ||
+                (friend.With == FromEmail && friend.User == ToEmail)
+            );
+        }
+
+        private bool IsUserExist(string email) => _dbContext.Users.Any(user => user.Email == email);
     }
 }

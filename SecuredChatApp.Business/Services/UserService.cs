@@ -105,18 +105,15 @@ namespace SecuredChatApp.Business.Services
 
         public ResultModel<object> AddFriend(AddFriendRequest request)
         {
-            var user = _dbContext.Users.SingleOrDefault(user => 
-                        user.Id == request.Id &&
-                        user.IsActive
-                    );
+            var user = _dbContext.Users.SingleOrDefault(user => user.Id == request.Id);
 
-            if (!IsUserExist(request.ToEmail))
+            if(user.Email == request.ToEmail)
+                return new ResultModel<object>(data: "You can't friend request to yourself!", type: ResultModel<object>.ResultType.FAIL);
+
+            var requestTo = _dbContext.Users.SingleOrDefault(user => user.Email == request.ToEmail);
+
+            if (requestTo == null)
                 return new ResultModel<object>(data: "User does not exist!", type: ResultModel<object>.ResultType.FAIL);
-
-            var requestTo = _dbContext.Users.SingleOrDefault(user =>
-                        user.Email == request.ToEmail &&
-                        user.IsActive
-                    );
 
             if (!CheckSingleAddFriendRequest(user.Email, request.ToEmail))
                 return new ResultModel<object>(data: "Only one friend request can be sent to a person!", type: ResultModel<object>.ResultType.FAIL);
@@ -148,6 +145,19 @@ namespace SecuredChatApp.Business.Services
             );
         }
 
-        private bool IsUserExist(string email) => _dbContext.Users.Any(user => user.Email == email);
+        public ResultModel<object> GetAddFriendRequests(GetAddFriendRequest request)
+        {
+            var user = _dbContext.Users.SingleOrDefault(user => user.Id == request.Id);
+
+            if (user == null)
+                return new ResultModel<object>(data: "User does not exist!", type: ResultModel<object>.ResultType.FAIL);
+
+            var requests = _dbContext.Friends.Where(requests => 
+                requests.With == user.Email &&
+                requests.IsRequest == true
+            ).ToList();
+
+            return new ResultModel<object>(data: new GetAddFriendResponse(requests));
+        }
     }
 }

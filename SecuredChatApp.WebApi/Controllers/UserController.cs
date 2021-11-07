@@ -49,11 +49,17 @@ namespace SecuredChatApp.WebApi.Controllers
             return result;
         }
 
-        [AllowAnonymous]
         [HttpPost("AddFriend")]
         public ResultModel<object> AddFriend([FromBody] AddFriendRequest request)
         {
             var result = _userService.AddFriend(request);
+            return result;
+        }
+
+        [HttpPost("GetAddFriendRequests")]
+        public ResultModel<object> GetAddFriendRequests([FromBody] GetAddFriendRequest request)
+        {
+            var result = _userService.GetAddFriendRequests(request);
             return result;
         }
 

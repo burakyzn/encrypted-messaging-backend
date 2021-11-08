@@ -105,12 +105,12 @@ namespace SecuredChatApp.Business.Services
 
         public ResultModel<object> AddFriend(AddFriendRequest request)
         {
-            var user = _dbContext.Users.SingleOrDefault(user => user.Id == request.Id);
+            var user = _dbContext.Users.SingleOrDefault(user => user.Id == request.Id && user.IsActive);
 
             if(user.Email == request.ToEmail)
                 return new ResultModel<object>(data: "You can't friend request to yourself!", type: ResultModel<object>.ResultType.FAIL);
 
-            var requestTo = _dbContext.Users.SingleOrDefault(user => user.Email == request.ToEmail);
+            var requestTo = _dbContext.Users.SingleOrDefault(user => user.Email == request.ToEmail && user.IsActive);
 
             if (requestTo == null)
                 return new ResultModel<object>(data: "User does not exist!", type: ResultModel<object>.ResultType.FAIL);
@@ -140,34 +140,55 @@ namespace SecuredChatApp.Business.Services
         private bool CheckSingleAddFriendRequest(string FromEmail, string ToEmail)
         {
             return !_dbContext.Friends.Any(friend => 
-                (friend.User == FromEmail && friend.With == ToEmail) ||
-                (friend.With == FromEmail && friend.User == ToEmail)
+                ((friend.User == FromEmail && friend.With == ToEmail) ||
+                (friend.With == FromEmail && friend.User == ToEmail)) &&
+                friend.IsActive
             );
         }
 
         public ResultModel<object> GetAddFriendRequests(GetAddFriendRequest request)
         {
-            var user = _dbContext.Users.SingleOrDefault(user => user.Id == request.Id);
+            var user = _dbContext.Users.SingleOrDefault(user => user.Id == request.Id && user.IsActive);
 
             if (user == null)
                 return new ResultModel<object>(data: "User does not exist!", type: ResultModel<object>.ResultType.FAIL);
 
             var requests = _dbContext.Friends.Where(requests => 
                 requests.With == user.Email &&
-                requests.IsRequest == true
+                requests.IsRequest == true &&
+                requests.IsActive
             ).ToList();
 
             return new ResultModel<object>(data: new GetAddFriendResponse(requests));
         }
 
-        public ResultModel<object> AcceptAddFriendRequests(AcceptAddFriendRequest request)
+        public ResultModel<object> AcceptAddFriendRequest(AcceptAddFriendRequest request)
         {
-            var friend = _dbContext.Friends.SingleOrDefault(friend => friend.Id == request.Id && friend.IsRequest);
+            var friend = _dbContext.Friends.SingleOrDefault(friend => friend.Id == request.Id && friend.IsRequest && friend.IsActive);
 
             if (friend == null)
                 return new ResultModel<object>(data: "Friend request does not exist!", type: ResultModel<object>.ResultType.FAIL);
 
             friend.IsRequest = false;
+
+            _dbContext.Friends.Update(friend);
+
+            int result = _dbContext.SaveChanges();
+
+            if (result < 0)
+                return new ResultModel<object>(data: "An unexpected error has occurred.", type: ResultModel<object>.ResultType.FAIL);
+
+            return new ResultModel<object>();
+        }
+
+        public ResultModel<object> RejectAddFriendRequest(RejectAddFriendRequest request)
+        {
+            var friend = _dbContext.Friends.SingleOrDefault(friend => friend.Id == request.Id && friend.IsRequest && friend.IsActive);
+
+            if (friend == null)
+                return new ResultModel<object>(data: "Friend request does not exist!", type: ResultModel<object>.ResultType.FAIL);
+
+            friend.IsActive = false;
 
             _dbContext.Friends.Update(friend);
 

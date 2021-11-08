@@ -66,7 +66,14 @@ namespace SecuredChatApp.WebApi.Controllers
         [HttpPost("AcceptAddFriendRequests")]
         public ResultModel<object> AcceptAddFriendRequests([FromBody] AcceptAddFriendRequest request)
         {
-            var result = _userService.AcceptAddFriendRequests(request);
+            var result = _userService.AcceptAddFriendRequest(request);
+            return result;
+        }
+
+        [HttpPost("RejectAddFriendRequests")]
+        public ResultModel<object> RejectAddFriendRequests([FromBody] RejectAddFriendRequest request)
+        {
+            var result = _userService.RejectAddFriendRequest(request);
             return result;
         }
 

@@ -8,5 +8,6 @@ namespace SecuredChatApp.Core.Interfaces.Services
         public ResultModel<object> Register(UserRegisterRequest request);
         public ResultModel<object> AddFriend(AddFriendRequest request);
         public ResultModel<object> GetAddFriendRequests(GetAddFriendRequest request);
+        public ResultModel<object> AcceptAddFriendRequests(AcceptAddFriendRequest request);
     }
 }

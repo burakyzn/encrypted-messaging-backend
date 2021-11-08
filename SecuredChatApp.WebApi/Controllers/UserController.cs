@@ -63,6 +63,13 @@ namespace SecuredChatApp.WebApi.Controllers
             return result;
         }
 
+        [HttpPost("AcceptAddFriendRequests")]
+        public ResultModel<object> AcceptAddFriendRequests([FromBody] AcceptAddFriendRequest request)
+        {
+            var result = _userService.AcceptAddFriendRequests(request);
+            return result;
+        }
+
         private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions

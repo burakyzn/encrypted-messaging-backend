@@ -77,6 +77,13 @@ namespace SecuredChatApp.WebApi.Controllers
             return result;
         }
 
+        [HttpPost("GetFriends")]
+        public ResultModel<object> GetFriends([FromBody] GetFriendsRequest request)
+        {
+            var result = _userService.GetFriends(request);
+            return result;
+        }
+
         private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions

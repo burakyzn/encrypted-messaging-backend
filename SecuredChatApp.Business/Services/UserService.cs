@@ -261,5 +261,24 @@ namespace SecuredChatApp.Business.Services
 
             return new ResultModel<object>(data: new GetFriendsResponse(list));
         }
+
+        public ResultModel<object> RemoveFriend(RemoveFriendRequest request)
+        {
+            var friend = _dbContext.Friends.SingleOrDefault(friend => friend.Id == request.Id && !friend.IsRequest && friend.IsActive);
+
+            if (friend == null)
+                return new ResultModel<object>(data: "Friend does not exist!", type: ResultModel<object>.ResultType.FAIL);
+
+            friend.IsActive = false;
+
+            _dbContext.Friends.Update(friend);
+
+            int result = _dbContext.SaveChanges();
+
+            if (result < 0)
+                return new ResultModel<object>(data: "An unexpected error has occurred.", type: ResultModel<object>.ResultType.FAIL);
+
+            return new ResultModel<object>();
+        }
     }
 }

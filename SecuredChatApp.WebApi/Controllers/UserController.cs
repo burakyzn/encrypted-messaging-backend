@@ -84,6 +84,13 @@ namespace SecuredChatApp.WebApi.Controllers
             return result;
         }
 
+        [HttpPost("RemoveFriend")]
+        public ResultModel<object> RemoveFriend([FromBody] RemoveFriendRequest request)
+        {
+            var result = _userService.RemoveFriend(request);
+            return result;
+        }
+
         private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions

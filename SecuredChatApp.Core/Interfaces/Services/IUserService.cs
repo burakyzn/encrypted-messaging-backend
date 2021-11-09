@@ -11,5 +11,6 @@ namespace SecuredChatApp.Core.Interfaces.Services
         public ResultModel<object> AcceptAddFriendRequest(AcceptAddFriendRequest request);
         public ResultModel<object> RejectAddFriendRequest(RejectAddFriendRequest request);
         public ResultModel<object> GetFriends(GetFriendsRequest request);
+        public ResultModel<object> RemoveFriend(RemoveFriendRequest request);
     }
 }

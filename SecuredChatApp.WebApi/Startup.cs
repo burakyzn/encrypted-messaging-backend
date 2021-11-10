@@ -66,6 +66,7 @@ namespace SecuredChatApp.WebApi
             });
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFriendService, FriendService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -78,8 +79,6 @@ namespace SecuredChatApp.WebApi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SecuredChatApp.WebApi v1"));
             }
-
-            app.UseHttpsRedirection();
 
             app.UseRouting();
 

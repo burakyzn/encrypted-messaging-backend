@@ -49,48 +49,6 @@ namespace SecuredChatApp.WebApi.Controllers
             return result;
         }
 
-        [HttpPost("AddFriend")]
-        public ResultModel<object> AddFriend([FromBody] AddFriendRequest request)
-        {
-            var result = _userService.AddFriend(request);
-            return result;
-        }
-
-        [HttpPost("GetAddFriendRequests")]
-        public ResultModel<object> GetAddFriendRequests([FromBody] GetAddFriendRequest request)
-        {
-            var result = _userService.GetAddFriendRequests(request);
-            return result;
-        }
-
-        [HttpPost("AcceptAddFriendRequests")]
-        public ResultModel<object> AcceptAddFriendRequests([FromBody] AcceptAddFriendRequest request)
-        {
-            var result = _userService.AcceptAddFriendRequest(request);
-            return result;
-        }
-
-        [HttpPost("RejectAddFriendRequests")]
-        public ResultModel<object> RejectAddFriendRequests([FromBody] RejectAddFriendRequest request)
-        {
-            var result = _userService.RejectAddFriendRequest(request);
-            return result;
-        }
-
-        [HttpPost("GetFriends")]
-        public ResultModel<object> GetFriends([FromBody] GetFriendsRequest request)
-        {
-            var result = _userService.GetFriends(request);
-            return result;
-        }
-
-        [HttpPost("RemoveFriend")]
-        public ResultModel<object> RemoveFriend([FromBody] RemoveFriendRequest request)
-        {
-            var result = _userService.RemoveFriend(request);
-            return result;
-        }
-
         private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions

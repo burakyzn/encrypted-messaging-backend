@@ -13,6 +13,8 @@ using System;
 using SecuredChatApp.Business.Helpers;
 using SecuredChatApp.Core.Interfaces.Services;
 using SecuredChatApp.Business.Services;
+using SecuredChatApp.WebApi.SocketHubs;
+using Microsoft.AspNetCore.Http.Connections;
 
 namespace SecuredChatApp.WebApi
 {
@@ -65,6 +67,8 @@ namespace SecuredChatApp.WebApi
                 };
             });
 
+            services.AddSignalR();
+
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFriendService, FriendService>();
         }
@@ -94,6 +98,13 @@ namespace SecuredChatApp.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapHub<MainHub>("/mainhub", options =>
+                {
+                    options.Transports =
+                        HttpTransportType.WebSockets |
+                        HttpTransportType.LongPolling;
+                });
             });
         }
     }

@@ -71,6 +71,7 @@ namespace SecuredChatApp.WebApi
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFriendService, FriendService>();
+            services.AddScoped<IMessageService, MessageService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -94,5 +94,38 @@ namespace SecuredChatApp.Business.Services
 
             return new ResultModel<object>(data: new GetMessageBoxResponse(result));
         }
+
+        public ResultModel<object> GetMessages(GetMessagesRequest request)
+        {
+            var user = _dbContext.Users.SingleOrDefault(user => user.Id == request.Id && user.IsActive);
+
+            if (user == null)
+                return new ResultModel<object>(data: "User does not exist!", type: ResultModel<object>.ResultType.FAIL);
+
+            var messages = _dbContext.Messages.Where(message =>
+                (
+                    (message.Sender == user.Id && message.To == request.FriendId) ||
+                    (message.To == user.Id && message.Sender == request.FriendId)
+                ) &&
+                message.IsActive
+            ).OrderByDescending(message => message.Created).ToList();
+
+            List<GetMessagesModel> result = new List<GetMessagesModel>();
+            foreach (MessageEntity message in messages)
+            {
+                GetMessagesModel getMessageModel = new GetMessagesModel
+                {
+                    Sender = message.Sender,
+                    To = message.To,
+                    Message = message.Message,
+                    Read = message.Read,
+                    SendDate = message.Created
+                };
+
+                result.Add(getMessageModel);
+            }
+
+            return new ResultModel<object>(data: new GetMessagesResponse(result));
+        }
     }
 }

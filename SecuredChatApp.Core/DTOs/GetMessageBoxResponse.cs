@@ -5,11 +5,11 @@ namespace SecuredChatApp.Core.DTOs
 {
     public class GetMessageBoxResponse
     {
-        public List<GetMessageBoxModel> requests { get; set; }
+        public List<GetMessageBoxModel> response { get; set; }
 
         public GetMessageBoxResponse(List<GetMessageBoxModel> getMessageBoxes)
         {
-            requests = new List<GetMessageBoxModel>();
+            response = new List<GetMessageBoxModel>();
 
             foreach (var item in getMessageBoxes)
             {
@@ -22,7 +22,7 @@ namespace SecuredChatApp.Core.DTOs
                     Read = item.Read
                 };
 
-                requests.Add(model);
+                response.Add(model);
             }
         }
     }

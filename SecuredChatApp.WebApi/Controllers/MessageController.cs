@@ -23,5 +23,12 @@ namespace SecuredChatApp.WebApi.Controllers
             var result = _messageService.GetMessageBox(request);
             return result;
         }
+
+        [HttpPost("GetMessages")]
+        public ResultModel<object> GetMessages([FromBody] GetMessagesRequest request)
+        {
+            var result = _messageService.GetMessages(request);
+            return result;
+        }
     }
 }

@@ -1,9 +1,11 @@
-﻿namespace SecuredChatApp.Core.Entities
+﻿using System;
+
+namespace SecuredChatApp.Core.Entities
 {
     public class FriendEntity : BaseEntity
     {
-        public string User { get; set; }
-        public string With { get; set; }
+        public Guid SenderUserID { get; set; }
+        public Guid ReceiverID { get; set; }
         public bool IsRequest { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace SecuredChatApp.Core.DTOs
     {
         public List<GetAddFriendResponseModel> requests { get; set; }
 
-        public GetAddFriendResponse(List<FriendEntity> addFriendRequests)
+        public GetAddFriendResponse(List<GetAddFriendResultModel> addFriendRequests)
         {
             requests = new List<GetAddFriendResponseModel>();
 
@@ -15,8 +15,8 @@ namespace SecuredChatApp.Core.DTOs
             {
                 GetAddFriendResponseModel model = new GetAddFriendResponseModel
                 {
-                    Id = item.Id,
-                    FromEmail = item.User
+                    Id = item.addFriendRequest.Id,
+                    FromEmail = item.FriendEmail
                 };
 
                 requests.Add(model);

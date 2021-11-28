@@ -10,8 +10,8 @@ using SecuredChatApp.Infrastructure;
 namespace SecuredChatApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211106193612_02_friendEntity")]
-    partial class _02_friendEntity
+    [Migration("20211128133105_01_cleanMigration")]
+    partial class _01_cleanMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -39,15 +39,47 @@ namespace SecuredChatApp.Infrastructure.Migrations
                     b.Property<bool>("IsRequest")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("User")
-                        .HasColumnType("text");
+                    b.Property<Guid>("ReceiverID")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("With")
-                        .HasColumnType("text");
+                    b.Property<Guid>("SenderUserID")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.ToTable("Friends");
+                });
+
+            modelBuilder.Entity("SecuredChatApp.Core.Entities.MessageEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Creator")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Read")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("Sender")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("To")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("SecuredChatApp.Core.Entities.UserEntity", b =>

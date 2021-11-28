@@ -35,15 +35,15 @@ namespace SecuredChatApp.Business.Services
             if (requestTo == null)
                 return new ResultModel<object>(data: "User does not exist!", type: ResultModel<object>.ResultType.FAIL);
 
-            if (!CheckSingleAddFriendRequest(user.Email, request.ToEmail))
+            if (!CheckSingleAddFriendRequest(user.Id, requestTo.Id))
                 return new ResultModel<object>(data: "Only one friend request can be sent to a person!", type: ResultModel<object>.ResultType.FAIL);
 
             FriendEntity friendEntity = new FriendEntity
             {
                 Creator = request.Id.ToString(),
                 IsRequest = true,
-                User = user.Email,
-                With = request.ToEmail,
+                SenderUserID = user.Id,
+                ReceiverID = requestTo.Id,
                 IsActive = true
             };
 
@@ -57,11 +57,11 @@ namespace SecuredChatApp.Business.Services
             return new ResultModel<object>();
         }
 
-        private bool CheckSingleAddFriendRequest(string FromEmail, string ToEmail)
+        private bool CheckSingleAddFriendRequest(Guid SenderUserID, Guid ReceiverID)
         {
             return !_dbContext.Friends.Any(friend =>
-                ((friend.User == FromEmail && friend.With == ToEmail) ||
-                (friend.With == FromEmail && friend.User == ToEmail)) &&
+                ((friend.SenderUserID == SenderUserID && friend.ReceiverID == ReceiverID) ||
+                (friend.ReceiverID == SenderUserID && friend.SenderUserID == ReceiverID)) &&
                 friend.IsActive
             );
         }
@@ -74,12 +74,40 @@ namespace SecuredChatApp.Business.Services
                 return new ResultModel<object>(data: "User does not exist!", type: ResultModel<object>.ResultType.FAIL);
 
             var requests = _dbContext.Friends.Where(requests =>
-                requests.With == user.Email &&
+                requests.ReceiverID == user.Id &&
                 requests.IsRequest == true &&
                 requests.IsActive
             ).ToList();
 
-            return new ResultModel<object>(data: new GetAddFriendResponse(requests));
+            List<Guid> friendsId = new List<Guid>();
+            foreach (var item in requests)
+            {
+                if (item.SenderUserID == user.Id)
+                    friendsId.Add(item.ReceiverID);
+                else
+                    friendsId.Add(item.SenderUserID);
+            }
+
+            var friendUsers = _dbContext.Users.Where(users => friendsId.Contains(users.Id) && users.IsActive);
+
+            List<GetAddFriendResultModel> result = new List<GetAddFriendResultModel>();
+            foreach (var item in requests)
+            {
+                foreach (var item2 in friendUsers)
+                {
+                    if (item.SenderUserID == item2.Id || item.ReceiverID == item2.Id)
+                    {
+                        GetAddFriendResultModel resultModel = new GetAddFriendResultModel()
+                        {
+                            FriendEmail = item2.Email,
+                            addFriendRequest = item
+                        };
+                        result.Add(resultModel);
+                    }
+                }
+            }
+
+            return new ResultModel<object>(data: new GetAddFriendResponse(result));
         }
 
         public ResultModel<object> AcceptAddFriendRequest(AcceptAddFriendRequest request)
@@ -129,53 +157,32 @@ namespace SecuredChatApp.Business.Services
 
             var friends = _dbContext.Friends.Where(friends =>
                 (
-                    friends.User == user.Email ||
-                    friends.With == user.Email
+                    friends.SenderUserID == user.Id ||
+                    friends.ReceiverID == user.Id
                 ) &&
                 friends.IsRequest == false &&
                 friends.IsActive
             ).ToList();
 
-            List<string> friendsEmail = new List<string>();
+            List<Guid> friendsId = new List<Guid>();
             foreach (var item in friends)
             {
-                if (item.User == user.Email)
-                    friendsEmail.Add(item.With);
+                if (item.SenderUserID == user.Id)
+                    friendsId.Add(item.ReceiverID);
                 else
-                    friendsEmail.Add(item.User);
+                    friendsId.Add(item.SenderUserID);
             }
 
-            var friendsNicknameAndEmails = _dbContext.Users.Where(friends =>
-                friendsEmail.Contains(friends.Email) &&
-                friends.IsActive
-            ).Select(friend => new { friend.Nickname, friend.Email });
-
-            var x = friends.Join(friendsNicknameAndEmails,
-                friend => friend.User,
-                friendsNicknameAndEmail => friendsNicknameAndEmail.Email,
-                (friend, friendsNicknameAndEmail) => new {
-                    friend.Id,
-                    friendsNicknameAndEmail.Nickname,
-                    friendsNicknameAndEmail.Email
-                }
-            );
-
-            var y = friends.Join(friendsNicknameAndEmails,
-                friend => friend.With,
-                friendsNicknameAndEmail => friendsNicknameAndEmail.Email,
-                (friend, friendsNicknameAndEmail) => new {
-                    friend.Id,
-                    friendsNicknameAndEmail.Nickname,
-                    friendsNicknameAndEmail.Email
-                }
-            );
-
-            var result = x.Concat(y);
+            var friendUsers = _dbContext.Users.Where(users => friendsId.Contains(users.Id) && users.IsActive);
 
             Dictionary<Guid, string> list = new Dictionary<Guid, string>();
-            foreach (var item in result)
+            foreach (var item in friendUsers)
             {
-                list.Add(item.Id, String.Concat(item.Nickname, " (", item.Email, ")"));
+                foreach (var item2 in friends)
+                {
+                    if(item2.SenderUserID == item.Id || item2.ReceiverID == item.Id)
+                        list.Add(item2.Id, String.Concat(item.Nickname, " (", item.Email, ")"));
+                }
             }
 
             return new ResultModel<object>(data: new GetFriendsResponse(list));

@@ -32,26 +32,23 @@ namespace SecuredChatApp.Business.Services
 
             var friends = _dbContext.Friends.Where(friends =>
                 (
-                    friends.User == user.Email ||
-                    friends.With == user.Email
+                    friends.SenderUserID == user.Id ||
+                    friends.ReceiverID == user.Id
                 ) &&
                 friends.IsRequest == false &&
                 friends.IsActive
             ).ToList();
 
-            List<string> friendsEmail = new List<string>();
+            List<Guid> friendsId = new List<Guid>();
             foreach (var item in friends)
             {
-                if (item.User == user.Email)
-                    friendsEmail.Add(item.With);
+                if (item.SenderUserID == user.Id)
+                    friendsId.Add(item.ReceiverID);
                 else
-                    friendsEmail.Add(item.User);
+                    friendsId.Add(item.SenderUserID);
             }
 
-            var friendsNicknameAndEmails = _dbContext.Users.Where(friends =>
-                friendsEmail.Contains(friends.Email) &&
-                friends.IsActive
-            ).Select(friend => new { friend.Id, friend.Nickname, friend.Email });
+            var friendUsers = _dbContext.Users.Where(users => friendsId.Contains(users.Id) && users.IsActive);
 
             List<GetMessageBoxModel> messageBoxList = new List<GetMessageBoxModel>();
 
@@ -60,7 +57,7 @@ namespace SecuredChatApp.Business.Services
                     message.To == user.Id
                 ).OrderByDescending(message => message.Created).ToList();
 
-            foreach (var item in friendsNicknameAndEmails)
+            foreach (var item in friendUsers)
             {
                 GetMessageBoxModel box = new GetMessageBoxModel
                 {

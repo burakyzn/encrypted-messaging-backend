@@ -37,11 +37,11 @@ namespace SecuredChatApp.Infrastructure.Migrations
                     b.Property<bool>("IsRequest")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("User")
-                        .HasColumnType("text");
+                    b.Property<Guid>("ReceiverID")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("With")
-                        .HasColumnType("text");
+                    b.Property<Guid>("SenderUserID")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 

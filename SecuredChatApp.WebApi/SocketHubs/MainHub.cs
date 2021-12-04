@@ -38,6 +38,7 @@ namespace SecuredChatApp.WebApi.SocketHubs
             ClientModel client = new ClientModel
             {
                 ConnectionId = Context.ConnectionId,
+                UserID = user.Id,
                 Nickname = user.Nickname
             };
 
@@ -45,6 +46,25 @@ namespace SecuredChatApp.WebApi.SocketHubs
 
             await Clients.Others.SendAsync("clientJoined", user.Nickname);
         }
+
+        public async Task SendMessage(Guid id, Guid friendId, string message, string sendDate, string jwtToken)
+        {
+            if (!AuthCheck(jwtToken))
+                return;
+
+            var user = _dbContext.Users.SingleOrDefault(user => user.Id == id && user.IsActive);
+
+            if (user == null)
+                return;
+
+            ClientModel client = ClientSource.Clients.FirstOrDefault(client => client.UserID == friendId);
+
+            if (client == null)
+                return;
+
+            await Clients.Client(client.ConnectionId).SendAsync("receiveMessage", user.Id.ToString(), message, sendDate);
+        }
+
         public async Task TestSendMessage(string message)
         {
             await Clients.All.SendAsync("newMessage", "anonymous", message);

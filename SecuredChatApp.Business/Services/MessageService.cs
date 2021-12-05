@@ -105,7 +105,7 @@ namespace SecuredChatApp.Business.Services
                     (message.To == user.Id && message.Sender == request.FriendId)
                 ) &&
                 message.IsActive
-            ).OrderByDescending(message => message.Created).ToList();
+            ).OrderBy(message => message.Created).ToList();
 
             List<GetMessagesModel> result = new List<GetMessagesModel>();
             foreach (MessageEntity message in messages)

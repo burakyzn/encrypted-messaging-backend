@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SecuredChatApp.Business.Helpers;
 using SecuredChatApp.Core.DTOs;
+using SecuredChatApp.Core.Entities;
 using SecuredChatApp.Infrastructure;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -61,6 +62,18 @@ namespace SecuredChatApp.WebApi.SocketHubs
 
             if (client == null)
                 return;
+
+            MessageEntity messageEntity = new MessageEntity()
+            {
+                Sender = id,
+                To = friendId,
+                Message = message,
+                Created = Convert.ToDateTime(sendDate),
+                Creator = id.ToString(),
+                Read = false
+            };
+            _dbContext.Messages.Add(messageEntity);
+            _dbContext.SaveChanges();
 
             await Clients.Client(client.ConnectionId).SendAsync("receiveMessage", user.Id.ToString(), message, sendDate);
         }

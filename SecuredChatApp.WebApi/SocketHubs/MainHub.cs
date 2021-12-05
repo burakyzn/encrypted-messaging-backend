@@ -26,7 +26,15 @@ namespace SecuredChatApp.WebApi.SocketHubs
             _appSettings = appSettings.Value;
         }
 
-        public async Task ChatLogin(Guid id, string jwtToken)
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            ClientModel client = ClientSource.Clients.FirstOrDefault(client => client.ConnectionId == Context.ConnectionId);
+            ClientSource.Clients.Remove(client);
+
+            await base.OnDisconnectedAsync(exception);
+        }
+
+        public async Task Connection(Guid id, string jwtToken)
         {
             if (!AuthCheck(jwtToken))
                 return;

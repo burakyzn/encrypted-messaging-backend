@@ -94,11 +94,6 @@ namespace SecuredChatApp.WebApi.SocketHubs
             await Clients.Client(client.ConnectionId).SendAsync("receiveMessage", user.Id.ToString(), message, sendDate);
         }
 
-        public async Task TestSendMessage(string message)
-        {
-            await Clients.All.SendAsync("newMessage", "anonymous", message);
-        }
-
         private bool AuthCheck(string jwtToken)
         {
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);

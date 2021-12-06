@@ -9,6 +9,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SecuredChatApp.WebApi.SocketHubs
@@ -31,6 +32,9 @@ namespace SecuredChatApp.WebApi.SocketHubs
             ClientModel client = ClientSource.Clients.FirstOrDefault(client => client.ConnectionId == Context.ConnectionId);
             ClientSource.Clients.Remove(client);
 
+            string json = JsonSerializer.Serialize(ClientSource.Clients.Select(clients => clients.UserID).ToList());
+            await Clients.Others.SendAsync("onlineList", json);
+
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -51,14 +55,18 @@ namespace SecuredChatApp.WebApi.SocketHubs
                 Nickname = user.Nickname
             };
 
+            if(ClientSource.Clients.Any(client => client.UserID == id))
+                ClientSource.Clients.Remove(ClientSource.Clients.FirstOrDefault(client => client.UserID == id));
+
             ClientSource.Clients.Add(client);
 
-            await Clients.Others.SendAsync("clientJoined", user.Nickname);
+            string json = JsonSerializer.Serialize(ClientSource.Clients.Select(clients => clients.UserID).ToList());
+            await Clients.All.SendAsync("onlineList", json);
         }
 
         public async Task SendMessage(Guid id, Guid friendId, string message, string sendDate, string jwtToken)
         {
-            if (!AuthCheck(jwtToken))
+            if (string.IsNullOrEmpty(message) || !AuthCheck(jwtToken))
                 return;
 
             var user = _dbContext.Users.SingleOrDefault(user => user.Id == id && user.IsActive);

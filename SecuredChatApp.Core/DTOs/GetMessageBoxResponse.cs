@@ -19,6 +19,7 @@ namespace SecuredChatApp.Core.DTOs
                     Message = string.IsNullOrEmpty(item.Message) ? "" : item.Message,
                     Nickname = item.Nickname,
                     SendDate = item.SendDate,
+                    LastSenderUserId = item.LastSenderUserId,
                     Read = item.Read
                 };
 

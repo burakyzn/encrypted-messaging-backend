@@ -9,5 +9,6 @@ namespace SecuredChatApp.Core.DTOs
         public string Message { get; set; }
         public DateTime? SendDate { get; set; }
         public bool Read { get; set; }
+        public Guid LastSenderUserId { get; set; }
     }
 }

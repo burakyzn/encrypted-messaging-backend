@@ -6,6 +6,7 @@ using SecuredChatApp.Core.DTOs;
 using SecuredChatApp.Core.Entities;
 using SecuredChatApp.Infrastructure;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
@@ -74,9 +75,9 @@ namespace SecuredChatApp.WebApi.SocketHubs
             if (user == null)
                 return;
 
-            ClientModel client = ClientSource.Clients.FirstOrDefault(client => client.UserID == friendId);
+            var friend = _dbContext.Users.SingleOrDefault(user => user.Id == friendId && user.IsActive);
 
-            if (client == null)
+            if (friend == null)
                 return;
 
             MessageEntity messageEntity = new MessageEntity()
@@ -89,9 +90,40 @@ namespace SecuredChatApp.WebApi.SocketHubs
                 Read = false
             };
             _dbContext.Messages.Add(messageEntity);
-            _dbContext.SaveChanges();
+            int result = _dbContext.SaveChanges();
+            if (result < 1)
+                return;
+
+            ClientModel client = ClientSource.Clients.FirstOrDefault(client => client.UserID == friendId);
+
+            if (client == null)
+                return;
 
             await Clients.Client(client.ConnectionId).SendAsync("receiveMessage", user.Id.ToString(), message, sendDate);
+        }
+
+        public async Task SwitchToReadMessages(Guid id, Guid friendId, string jwtToken)
+        {
+            if (!AuthCheck(jwtToken))
+                return;
+
+            var user = _dbContext.Users.SingleOrDefault(user => user.Id == id && user.IsActive);
+
+            if (user == null)
+                return;
+
+            List<MessageEntity> messages = new List<MessageEntity>();
+            messages = _dbContext.Messages.Where(messages => 
+                messages.Sender == friendId && 
+                messages.To == id &&
+                messages.Read == false
+            ).ToList();
+
+            for (int i = 0; i < messages.Count; i++) 
+                messages[i].Read = true;
+            _dbContext.UpdateRange(messages);
+
+            await _dbContext.SaveChangesAsync();
         }
 
         private bool AuthCheck(string jwtToken)

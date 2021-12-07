@@ -72,6 +72,7 @@ namespace SecuredChatApp.Business.Services
                     {
                         box.Message = item2.Message;
                         box.SendDate = item2.Created;
+                        box.LastSenderUserId = item2.Sender;
                         box.Read = item2.Read;
 
                         break;

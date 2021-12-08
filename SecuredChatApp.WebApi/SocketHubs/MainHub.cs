@@ -126,6 +126,15 @@ namespace SecuredChatApp.WebApi.SocketHubs
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task Logout()
+        {
+            ClientModel client = ClientSource.Clients.FirstOrDefault(client => client.ConnectionId == Context.ConnectionId);
+            ClientSource.Clients.Remove(client);
+
+            string json = JsonSerializer.Serialize(ClientSource.Clients.Select(clients => clients.UserID).ToList());
+            await Clients.Others.SendAsync("onlineList", json);
+        }
+
         private bool AuthCheck(string jwtToken)
         {
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);

@@ -49,6 +49,16 @@ namespace SecuredChatApp.WebApi.Controllers
             return result;
         }
 
+        [HttpPost("Profile")]
+        public ResultModel<object> Profile()
+        {
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            string userId = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+
+            var result = _userService.Profile(userId);
+            return result;
+        }
+
         private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions

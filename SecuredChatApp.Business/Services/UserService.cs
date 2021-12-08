@@ -98,7 +98,18 @@ namespace SecuredChatApp.Business.Services
 
             return new ResultModel<object>(data: new UserRegisterResponse(userEntity));
         }
-    
+
+        public ResultModel<object> Profile(string userId)
+        {
+            var user = _dbContext.Users
+                .SingleOrDefault(user => user.Id.ToString() == userId && user.IsActive);
+
+            if (user == null)
+                return new ResultModel<object>(data: "User does not exist!", type: ResultModel<object>.ResultType.FAIL);
+
+            return new ResultModel<object>(data: new GetUserProfileResponse(user.Nickname, user.Email));
+        }
+
         private bool CheckEmailUniqueness(string email){
             return !_dbContext.Users.Any(user => user.Email == email);
         }

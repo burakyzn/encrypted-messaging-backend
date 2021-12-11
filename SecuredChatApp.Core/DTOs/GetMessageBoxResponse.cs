@@ -18,6 +18,7 @@ namespace SecuredChatApp.Core.DTOs
                     FriendId = item.FriendId,
                     Message = string.IsNullOrEmpty(item.Message) ? "" : item.Message,
                     Nickname = item.Nickname,
+                    AvatarUrl = item.AvatarUrl,
                     SendDate = item.SendDate,
                     LastSenderUserId = item.LastSenderUserId,
                     Read = item.Read

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SecuredChatApp.Core.Interfaces.Services;
 using SecuredChatApp.Core.DTOs;
+using System.Threading.Tasks;
 
 namespace SecuredChatApp.WebApi.Controllers
 {
@@ -56,6 +57,16 @@ namespace SecuredChatApp.WebApi.Controllers
             string userId = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
 
             var result = _userService.Profile(userId);
+            return result;
+        }
+
+        [HttpPost("ChangeProfileImage")]
+        public async Task<ResultModel<object>> ChangeProfileImage(IFormFile profileImage)
+        {
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            string userId = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+
+            var result = await _userService.ChangeProfileImage(profileImage, userId);
             return result;
         }
 

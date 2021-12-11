@@ -126,6 +126,46 @@ namespace SecuredChatApp.WebApi.SocketHubs
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task ProfileImageChanged(Guid id, string jwtToken)
+        {
+            if (!AuthCheck(jwtToken))
+                return;
+
+            var user = _dbContext.Users.SingleOrDefault(user => user.Id == id && user.IsActive);
+
+            if (user == null)
+                return;
+
+            var friends = _dbContext.Friends.Where(friend => 
+                (friend.SenderUserID == user.Id || friend.ReceiverID == user.Id) &&
+                friend.IsRequest == false &&
+                friend.IsActive
+            );
+            List<string> friendIds = new List<string>();
+            foreach (var friend in friends)
+            {
+                if (friend.SenderUserID == user.Id)
+                    friendIds.Add(friend.ReceiverID.ToString());
+                else
+                    friendIds.Add(friend.SenderUserID.ToString());
+            }
+
+            List<ClientModel> clients = ClientSource.Clients.Where(client => friendIds.Contains(client.UserID.ToString())).ToList();
+
+            if (clients == null)
+                return;
+
+            List<string> toFriends = clients.Select(client => client.ConnectionId).ToList();
+            
+            await Clients.Clients(toFriends).SendAsync("friendProfileImageChanged", user.Id.ToString(), user.ProfileImageUrl);
+
+            //await Clients.Others.SendAsync("friendProfileImageChanged", user.Id.ToString());
+            //string json = JsonSerializer.Serialize(ClientSource.Clients.Select(clients => clients.UserID).ToList());
+            //await Clients.Others.SendAsync("onlineList", json);
+            //await Clients.Others.SendAsync("onlineList", json);
+        }
+
+
         public async Task Logout()
         {
             ClientModel client = ClientSource.Clients.FirstOrDefault(client => client.ConnectionId == Context.ConnectionId);

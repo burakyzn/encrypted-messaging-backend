@@ -11,6 +11,9 @@ using SecuredChatApp.Core.Entities;
 using SecuredChatApp.Core.Interfaces.Services;
 using SecuredChatApp.Core.DTOs;
 using SecuredChatApp.Infrastructure;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace SecuredChatApp.Business.Services
 {
@@ -107,11 +110,49 @@ namespace SecuredChatApp.Business.Services
             if (user == null)
                 return new ResultModel<object>(data: "User does not exist!", type: ResultModel<object>.ResultType.FAIL);
 
-            return new ResultModel<object>(data: new GetUserProfileResponse(user.Nickname, user.Email));
+            return new ResultModel<object>(data: new GetUserProfileResponse(user.Nickname, user.Email, user.ProfileImageUrl));
         }
 
         private bool CheckEmailUniqueness(string email){
             return !_dbContext.Users.Any(user => user.Email == email);
+        }
+
+        public async Task<ResultModel<object>> ChangeProfileImage(IFormFile profileImage, string userId)
+        {
+            var user = _dbContext.Users
+                .SingleOrDefault(user => user.Id.ToString() == userId && user.IsActive);
+
+            if (user == null)
+                return new ResultModel<object>(data: "User does not exist!", type: ResultModel<object>.ResultType.FAIL);
+
+            string oldImageUrl = string.IsNullOrEmpty(user.ProfileImageUrl) ? "" : user.ProfileImageUrl;
+
+            var extension = Path.GetExtension(profileImage.FileName);
+
+            var pathDir = Path.Combine(Directory.GetCurrentDirectory(), "Contents\\Images\\Avatar");
+
+            if (!Directory.Exists(pathDir))
+                Directory.CreateDirectory(pathDir);
+
+            string fileName = Guid.NewGuid() + extension;
+            using (var stream = new FileStream(Path.Combine(pathDir, fileName), FileMode.Create))
+            {
+                await profileImage.CopyToAsync(stream);
+            }
+
+            user.ProfileImageUrl = fileName;
+            _dbContext.Update(user);
+            int result = _dbContext.SaveChanges();
+
+            if(result > 0)
+            {
+                if(!string.IsNullOrEmpty(oldImageUrl) && File.Exists(Path.Combine(pathDir, oldImageUrl)))
+                    File.Delete(Path.Combine(pathDir, oldImageUrl));
+
+                return new ResultModel<object>(data: fileName, type: ResultModel<object>.ResultType.SUCCESS);
+            }
+            else
+                return new ResultModel<object>(data: "fail", type: ResultModel<object>.ResultType.FAIL);
         }
     }
 }

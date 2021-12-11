@@ -21,6 +21,10 @@
     <ProjectReference Include="../SecuredChatApp.Business/SecuredChatApp.Business.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Contents\Images\Avatar\" />
+  </ItemGroup>
+
   <Target Name="PrePublishTarget" AfterTargets="Publish">
     <Exec Command="dotnet ef database update" />
   </Target>

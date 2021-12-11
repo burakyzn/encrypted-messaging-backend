@@ -63,6 +63,7 @@ namespace SecuredChatApp.Business.Services
                 {
                     FriendId = item.Id,
                     Nickname = item.Nickname,
+                    AvatarUrl = item.ProfileImageUrl,
                     Read = true
                 };
                 foreach (var item2 in lastMessages)

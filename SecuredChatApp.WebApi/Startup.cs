@@ -15,6 +15,8 @@ using SecuredChatApp.Core.Interfaces.Services;
 using SecuredChatApp.Business.Services;
 using SecuredChatApp.WebApi.SocketHubs;
 using Microsoft.AspNetCore.Http.Connections;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace SecuredChatApp.WebApi
 {
@@ -111,6 +113,13 @@ namespace SecuredChatApp.WebApi
             
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SecuredChatApp.WebApi v1"));
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+            Path.Combine(env.ContentRootPath, "Contents")),
+                RequestPath = "/Contents"
+            });
 
             app.UseRouting();
 

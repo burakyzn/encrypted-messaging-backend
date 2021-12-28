@@ -30,5 +30,12 @@ namespace SecuredChatApp.WebApi.Controllers
             var result = _messageService.GetMessages(request);
             return result;
         }
+
+        [HttpPost("GetDHParameters")]
+        public ResultModel<object> GetDHParameters([FromBody] GetDHParameterOfMessageBoxRequest request)
+        {
+            var result = _messageService.GetDHParameterOfMessageBox(request);
+            return result;
+        }
     }
 }

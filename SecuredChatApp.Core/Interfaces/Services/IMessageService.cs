@@ -6,5 +6,6 @@ namespace SecuredChatApp.Core.Interfaces.Services
     {
         public ResultModel<object> GetMessageBox(GetMessageBoxRequest request);
         public ResultModel<object> GetMessages(GetMessagesRequest request);
+        public ResultModel<object> GetDHParameterOfMessageBox(GetDHParameterOfMessageBoxRequest request);
     }
 }

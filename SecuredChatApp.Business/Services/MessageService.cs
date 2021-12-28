@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Crypto.Generators;
+using Org.BouncyCastle.Security;
 using SecuredChatApp.Business.Helpers;
 using SecuredChatApp.Core.DTOs;
 using SecuredChatApp.Core.Entities;
@@ -125,6 +127,39 @@ namespace SecuredChatApp.Business.Services
             }
 
             return new ResultModel<object>(data: new GetMessagesResponse(result));
+        }
+    
+        public ResultModel<object> GetDHParameterOfMessageBox(GetDHParameterOfMessageBoxRequest request){
+            var messageBoxRecord = _dbContext.MessageBoxes
+                .Where(field => (field.Sender == request.SenderUserId && field.To == request.ToUserId) 
+                    || (field.To == request.SenderUserId && field.Sender == request.ToUserId))
+                .SingleOrDefault();
+            
+            if(messageBoxRecord == null){
+                var generator = new DHParametersGenerator();
+                generator.Init(1024, 1, new SecureRandom());
+                var generatedNumbers = generator.GenerateParameters();
+
+                var newMessageBox = new MessageBoxEntity(){
+                    Sender = request.SenderUserId,
+                    To = request.ToUserId,
+                    NumberP = generatedNumbers.P.ToString(),
+                    NumberG = generatedNumbers.G.ToString()
+                };
+
+                _dbContext.Add(newMessageBox);
+                _dbContext.SaveChanges();
+
+                return new ResultModel<object>(data: new {
+                    NumberP = newMessageBox.NumberP,
+                    NumberG = newMessageBox.NumberG
+                });
+            }
+
+            return new ResultModel<object>(data: new {
+                NumberP = messageBoxRecord.NumberP,
+                NumberG = messageBoxRecord.NumberG
+            });
         }
     }
 }

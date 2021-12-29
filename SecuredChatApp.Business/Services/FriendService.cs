@@ -54,7 +54,9 @@ namespace SecuredChatApp.Business.Services
             if (result < 0)
                 return new ResultModel<object>(data: "An unexpected error has occurred.", type: ResultModel<object>.ResultType.FAIL);
 
-            return new ResultModel<object>();
+            return new ResultModel<object>(data: new {
+                FriendId = requestTo.Id
+            });
         }
 
         private bool CheckSingleAddFriendRequest(Guid SenderUserID, Guid ReceiverID)

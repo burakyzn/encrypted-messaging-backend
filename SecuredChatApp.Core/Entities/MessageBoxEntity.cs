@@ -8,5 +8,7 @@ namespace SecuredChatApp.Core.Entities
         public Guid To { get; set; }
         public string NumberP { get; set; }
         public string NumberG { get; set; }
+        public string FromPublicKey { get; set; }
+        public string ToPublicKey { get; set; }
     }
 }

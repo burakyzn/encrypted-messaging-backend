@@ -161,5 +161,43 @@ namespace SecuredChatApp.Business.Services
                 NumberG = messageBoxRecord.NumberG
             });
         }
+    
+        public ResultModel<object> SetPublicKey(SetPublicKeyRequest request){
+            var messageBoxRecord = _dbContext.MessageBoxes
+                .Where(field => (field.Sender == request.SenderUserId && field.To == request.ToUserId) 
+                    || (field.To == request.SenderUserId && field.Sender == request.ToUserId))
+                .SingleOrDefault();
+
+            if(messageBoxRecord == null)
+                return new ResultModel<object>(message: "Mesaj kutusu bulunmadı!", type: ResultModel<object>.ResultType.FAIL);
+
+            if(messageBoxRecord.Sender == request.SenderUserId){
+                messageBoxRecord.FromPublicKey = request.PublicKey;
+            } else {
+                messageBoxRecord.ToPublicKey = request.PublicKey;   
+            }
+
+            _dbContext.Update(messageBoxRecord);
+            _dbContext.SaveChanges();
+
+            return new ResultModel<object>();
+        }
+    
+        public ResultModel<object> GetPublicKeyFromMessageBox(GetPublicKeyRequest request){
+            var messageBoxRecord = _dbContext.MessageBoxes
+                .Where(field => (field.Sender == request.MyId && field.To == request.FriendId) 
+                    || (field.To == request.MyId && field.Sender == request.FriendId))
+                .SingleOrDefault();
+
+            if(messageBoxRecord.Sender == request.MyId){
+                return new ResultModel<object>(data : new {
+                    PublicKey = messageBoxRecord.ToPublicKey
+                });
+            }
+
+            return new ResultModel<object>(data : new {
+                PublicKey = messageBoxRecord.FromPublicKey
+            });
+        }
     }
 }

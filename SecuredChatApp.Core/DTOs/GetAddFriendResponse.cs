@@ -16,6 +16,7 @@ namespace SecuredChatApp.Core.DTOs
                 GetAddFriendResponseModel model = new GetAddFriendResponseModel
                 {
                     Id = item.addFriendRequest.Id,
+                    SenderUserId = item.addFriendRequest.SenderUserID,
                     FromEmail = item.FriendEmail
                 };
 

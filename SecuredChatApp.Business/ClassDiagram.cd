@@ -9,9 +9,9 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="SecuredChatApp.Business.Services.MessageService" BaseTypeListCollapsed="true">
-    <Position X="6.5" Y="9.25" Width="1.5" />
+    <Position X="6.5" Y="9.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAABAAAAAIAAAAAAAAAAAAAAAAAAEAAAAAAAABAAAAA=</HashCode>
+      <HashCode>AAABAAQAAIAAAQAAACAAAAAAAAAAEAAAAAAAABAAAAA=</HashCode>
       <FileName>Services\MessageService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -25,7 +25,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="SecuredChatApp.Core.Entities.BaseEntity">
-    <Position X="6.25" Y="2.5" Width="1.5" />
+    <Position X="7.5" Y="2.5" Width="1.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
@@ -42,18 +42,22 @@
     <TypeIdentifier />
   </Class>
   <Class Name="SecuredChatApp.Business.Helpers.AppSettings">
-    <Position X="8.25" Y="9.25" Width="1.5" />
+    <Position X="9.25" Y="9.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
       <FileName>Helpers\AppSettings.cs</FileName>
     </TypeIdentifier>
+  </Class>
+  <Class Name="SecuredChatApp.Core.Entities.MessageBoxEntity">
+    <Position X="10.25" Y="5.25" Width="1.75" />
+    <TypeIdentifier />
   </Class>
   <Interface Name="SecuredChatApp.Core.Interfaces.Services.IFriendService">
     <Position X="2" Y="4.5" Width="1.75" />
     <TypeIdentifier />
   </Interface>
   <Interface Name="SecuredChatApp.Core.Interfaces.Services.IMessageService">
-    <Position X="2" Y="6.75" Width="1.5" />
+    <Position X="1.75" Y="6.75" Width="2.25" />
     <TypeIdentifier />
   </Interface>
   <Interface Name="SecuredChatApp.Core.Interfaces.Services.IUserService">
@@ -61,7 +65,7 @@
     <TypeIdentifier />
   </Interface>
   <Interface Name="SecuredChatApp.Core.Interfaces.Entities.IEntity&lt;T&gt;">
-    <Position X="4.5" Y="2.5" Width="1.5" />
+    <Position X="5.75" Y="2.5" Width="1.5" />
     <TypeIdentifier />
   </Interface>
   <Font Name="Segoe UI" Size="9" />
